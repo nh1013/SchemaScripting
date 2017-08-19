@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaScripting", "SchemaScripting.csproj", "{5EF756B3-E4C8-B7E1-BBCA-1A39D624743B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchemaScripting.Editor", "SchemaScripting.Editor.csproj", "{A6D8EA0A-0396-1F17-4522-6708C8B1F80F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5EF756B3-E4C8-B7E1-BBCA-1A39D624743B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EF756B3-E4C8-B7E1-BBCA-1A39D624743B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EF756B3-E4C8-B7E1-BBCA-1A39D624743B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EF756B3-E4C8-B7E1-BBCA-1A39D624743B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6D8EA0A-0396-1F17-4522-6708C8B1F80F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6D8EA0A-0396-1F17-4522-6708C8B1F80F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6D8EA0A-0396-1F17-4522-6708C8B1F80F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6D8EA0A-0396-1F17-4522-6708C8B1F80F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
