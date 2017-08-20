@@ -4,44 +4,59 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-public class TableManager : MonoBehaviour {
-    public GameObject FieldCellPrefab;      // used to store cells
+public class TableManager : MonoBehaviour
+{
+    public Transform FieldCellPrefab;      // used to store cells
     
     public List<RectTransform> m_fields;    // list of field objects
-    public Text m_titleCell;                // Text of object storing the title
+    public TextMesh m_titleCell;                // Text of object storing the title
     private Transform table;
-    
+    private int fieldCount = 0;
     
     // Use this for initialization
-    void Start()
-    {
+    void Start() {
 
     }
 
-    void Select() {
+    /// <summary>
+    /// 
+    /// </summary>
+    public void Select() {
         // turn on selection in Model Manipulator
     }
 
-    void UnSelect() {
+    /// <summary>
+    /// 
+    /// </summary>
+    public void UnSelect() {
         // turn off selection in Model Manipulator
     }
 
-    void SetName(string name) {
+    /// <summary>
+    /// Set the title text of the table
+    /// </summary>
+    /// <param name="name">Name of the table.</param>
+    public void SetName(string name) {
         m_titleCell.text = name;
     }
 
-    void SetFields(List<StrPair> fields) {
+    /// <summary>
+    /// For every field, create a field object, set its contents and local position
+    /// </summary>
+    /// <param name="fields">Pairs of strings, indicating each field's name and type.</param>
+    public void SetFields(List<StrPair> fields) {
         foreach (StrPair pair in fields) {
-            GameObject cell = Instantiate(FieldCellPrefab, table);
-            Transform cellTransform = cell.transform;
-            cellTransform.Find("Field").GetComponent<Text>().text = pair.field;
-            cellTransform.Find("Type").GetComponent<Text>().text = pair.type;
+            Transform cell = Instantiate(FieldCellPrefab, table);
+            FieldCell cellManager = cell.GetComponent<FieldCell>();
+            cellManager.m_fieldName.text = pair.field;
+            cellManager.m_fieldType.text = pair.type;
+            cell.localPosition = new Vector3(0.0f, -fieldCount * FieldCellPrefab.localScale.y, 0.0f);
+            fieldCount++;
         }
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
 
     }
 }

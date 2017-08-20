@@ -27,6 +27,7 @@ public class FileManager : MonoBehaviour {
 
     public SchemaManager SourceManager;
     public SchemaManager TargetManager;
+    public MappingManager MapManager;
 
     // Use this for initialization
     void Start () {
@@ -71,11 +72,21 @@ public class FileManager : MonoBehaviour {
     }
     
     void ImportMapping() {
+        // line 1: "MatchResult", unknown brackets
+        // line 2 and 3: file path of source and target
+        // line 4: filler, 56 "-"s
+        //  - [table].[field] <-> [table].[field]: [confidence]
+        //  + Total: [number of] correspondences
+        // end filler, 56 "-"s
 
+        // send each mapping to mapping manager, call link(table, field, table2, field2)
+        // on fail, clear existing mapping, log error
     }
 
     void ExportMapping() {
-
+        // export in format as COMA requires
+        // for each connection in MappingManager,
+        // output beam.source.getName() + " <-> " + beam.target.getName() + ": " + beam.confidence;
     }
 
     // Update is called once per frame
