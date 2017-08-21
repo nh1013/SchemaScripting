@@ -35,7 +35,7 @@ public class FileManager : MonoBehaviour {
         RefreshFiles("Mappings");
     }
 
-    void RefreshFiles (string folder) {
+    List<string> RefreshFiles (string folder) {
         DirectoryInfo dir = new DirectoryInfo(folder + "/");
         List<string> fileNames = new List<string> { };
         FileInfo[] info;
@@ -47,7 +47,7 @@ public class FileManager : MonoBehaviour {
         }
         else {
             Debug.Log("RefreshFiles: folder not recognised: " + folder);
-            return;
+            return null;
         }
 
         foreach (FileInfo file in info)
@@ -55,7 +55,7 @@ public class FileManager : MonoBehaviour {
             fileNames.Add(Path.GetFileNameWithoutExtension(file.ToString()));
         }
         // put list of fileNames onto control panel
-        
+        return fileNames;
     }
 
     void ImportSchema(string fileName, bool SchemaType) {
@@ -75,6 +75,7 @@ public class FileManager : MonoBehaviour {
         // line 1: "MatchResult", unknown brackets
         // line 2 and 3: file path of source and target
         // line 4: filler, 56 "-"s
+        // use string.StartsWith(" - ") or " + " to determine end
         //  - [table].[field] <-> [table].[field]: [confidence]
         //  + Total: [number of] correspondences
         // end filler, 56 "-"s
@@ -83,10 +84,35 @@ public class FileManager : MonoBehaviour {
         // on fail, clear existing mapping, log error
     }
 
+    /// <summary>
+    /// Export the mapping into an unused file in folder Mappings/
+    /// </summary>
     void ExportMapping() {
+        // find unused filename
+        int count = 0;
+        string path = "Mappings/mathResult" + count + ".txt";
+        while (File.Exists(path)) {
+            count++;
+            path = "Mappings/mathResult" + count + ".txt";
+        }
+        StreamWriter sw = new StreamWriter(path);
+
         // export in format as COMA requires
+        sw.WriteLine("MatchResult [16,18]");
+        sw.WriteLine(SourceManager.m_schemaName);
+        sw.WriteLine(TargetManager.m_schemaName);
+        sw.WriteLine("--------------------------------------------------------");
         // for each connection in MappingManager,
         // output beam.source.getName() + " <-> " + beam.target.getName() + ": " + beam.confidence;
+        foreach (Transform beam in MapManager.m_BeamList) {
+            string beamSourceName = beam.GetComponent<MappingBeam>().m_SourceField.GetComponent<FieldCell>().GetFullName();
+            string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().GetFullName();
+            float beamConfidence = beam.GetComponent<MappingBeam>().m_confidence;
+            sw.WriteLine(" - " + beamSourceName + " <-> " + beamTargetName + ": " + beamConfidence);
+        }
+        sw.WriteLine(" + Total: " + MapManager.m_BeamList.Count + " correspondences");
+        sw.WriteLine("--------------------------------------------------------");
+        sw.Close();
     }
 
     // Update is called once per frame

@@ -6,6 +6,8 @@ public class MappingManager : MonoBehaviour
 {
     public Transform BeamPrefab;
 
+    public Transform SourceManager;
+    public Transform TargetManager;
     public List<Transform> m_BeamList;
 
     // Use this for initialization
@@ -13,20 +15,81 @@ public class MappingManager : MonoBehaviour
 
     }
 
-    // in-game addition of a beam, via selecting two fields
-    bool AddBeam(Transform sourceField, Transform targetField) {
+    /// <summary>
+    /// In-game addition of a beam, specifying fields via strings
+    /// </summary>
+    /// <param name="sTableName">Source schema's table name.</param>
+    /// <param name="sFieldName">Source table's field name.</param>
+    /// <param name="tTableName">Target schema's table name.</param>
+    /// <param name="tFieldName">Target table's field name.</param>
+    /// <param name="confidence">Confidence value of connection.</param>
+    /// <returns>True if load was successful, false if load failed and aborted.</returns>
+    public bool AddBeam(string sTableName, string sFieldName, string tTableName, string tFieldName, float confidence) {
+        // check if the fields exist
+        Transform sField, tField;
+        Transform sTable = SourceManager.Find(sTableName);
+        if (sTable == null) {
+            Debug.Log("source table not found: " + sTableName);
+            return false;
+        }
+        sField = sTable.Find(sFieldName);
+        if (sField == null) {
+            Debug.Log("source field not found: " + sFieldName);
+            return false;
+        }
+        Transform tTable = SourceManager.Find(tTableName);
+        if (tTable == null) {
+            Debug.Log("target table not found: " + tTableName);
+            return false;
+        }
+        tField = tTable.Find(tFieldName);
+        if (tField == null) {
+            Debug.Log("target field not found: " + tFieldName);
+            return false;
+        }
+
+        // pass over to overloaded function to make sure duplicate beams are not created
+        return AddBeam(sField, tField, confidence);
+    }
+
+    /// <summary>
+    /// In-game addition of a beam, via selecting two fields
+    /// </summary>
+    /// <param name="sourceField">Transform of object from source side schema.</param>
+    /// <param name="targetField">Transform of object from target side schema.</param>
+    public bool AddBeam(Transform sourceField, Transform targetField, float confidence = 1.0f) {
         // should check if beam already exists
-        
+        string sourceName = sourceField.GetComponent<FieldCell>().GetFullName();
+        string targetName = targetField.GetComponent<FieldCell>().GetFullName();
+        foreach (Transform beam in m_BeamList) {
+            string beamSourceName = beam.GetComponent<MappingBeam>().m_SourceField.GetComponent<FieldCell>().GetFullName();
+            if (sourceName != beamSourceName) {
+                continue;
+            }
+            string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().GetFullName();
+            if (targetName == beamTargetName) {
+                return false;
+            }
+        }
+
         // add the beam
-        Transform beam = Instantiate(BeamPrefab, transform);
-        m_BeamList.Add(beam);
-        beam.GetComponent<MappingBeam>().m_SourceField = sourceField;
-        beam.GetComponent<MappingBeam>().m_TargetField = targetField;
+        Transform newBeam = Instantiate(BeamPrefab, transform);
+        m_BeamList.Add(newBeam);
+        newBeam.GetComponent<MappingBeam>().m_confidence = confidence;
+        newBeam.GetComponent<MappingBeam>().m_SourceField = sourceField;
+        newBeam.GetComponent<MappingBeam>().m_TargetField = targetField;
         return true;
     }
 
-    // in-game removal of a beam, via selecting the beam's end nodes
-    bool RemoveBeam(Transform sourceField, Transform targetField) {
+    /// <summary>
+    /// In-game removal of a beam, via selecting the beam's end nodes
+    /// </summary>
+    /// <remarks>
+    /// With proper set up, this will never be called
+    /// </remarks>
+    /// <param name="sourceField">Start node of beam to be removed.</param>
+    /// <param name="targetField">End node of beam to be removed.</param>
+    public bool RemoveBeam(Transform sourceField, Transform targetField) {
         string sourceName = sourceField.GetComponent<FieldCell>().GetFullName();
         string targetName = targetField.GetComponent<FieldCell>().GetFullName();
         foreach (Transform beam in m_BeamList) {
@@ -48,8 +111,11 @@ public class MappingManager : MonoBehaviour
         return false;
     }
 
-    // in-game removal of a beam, via selecting the beam directly
-    bool RemoveBeam(Transform beam) {
+    /// <summary>
+    /// In-game removal of a beam, via selecting the beam directly
+    /// </summary>
+    /// <param name="beam">Object to be removed.</param>
+    public bool RemoveBeam(Transform beam) {
         // check if item is a beam
         if (!m_BeamList.Contains(beam)) {
             Debug.Log("Error: target object for deletion is not a beam, name: " + beam.name);
@@ -60,12 +126,15 @@ public class MappingManager : MonoBehaviour
         Destroy(beam);
         return true;
     }
-
-
-    public void ClearHeader() {
-        for (int i = headerRow.childCount - 1; i >= 0; i--) {
-            Destroy(headerRow.GetChild(i).gameObject);
+    
+    /// <summary>
+    /// Remove all beams
+    /// </summary>
+    public void ClearBeams() {
+        for (int i = transform.childCount - 1; i >= 0; i--) {
+            Destroy(transform.GetChild(i).gameObject);
         }
+        m_BeamList.Clear();
     }
 
     // Update is called once per frame

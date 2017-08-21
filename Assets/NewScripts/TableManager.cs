@@ -8,7 +8,7 @@ public class TableManager : MonoBehaviour
 {
     public Transform FieldCellPrefab;      // used to store cells
     
-    public List<RectTransform> m_fields;    // list of field objects
+    public List<Transform> m_fields;    // list of field objects
     public TextMesh m_titleCell;                // Text of object storing the title
     private Transform table;
     private int fieldCount = 0;
@@ -47,6 +47,7 @@ public class TableManager : MonoBehaviour
     public void SetFields(List<StrPair> fields) {
         foreach (StrPair pair in fields) {
             Transform cell = Instantiate(FieldCellPrefab, table);
+            m_fields.Add(cell);
             FieldCell cellManager = cell.GetComponent<FieldCell>();
             cellManager.m_fieldName.text = pair.field;
             cellManager.m_fieldType.text = pair.type;

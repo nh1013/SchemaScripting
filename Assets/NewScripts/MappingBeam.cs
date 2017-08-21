@@ -7,6 +7,8 @@ public class MappingBeam : MonoBehaviour
     public Transform m_TargetField;
     public Transform m_beam;
 
+    public float m_confidence = 1.0f;
+
     // Use this for initialization
     void Start() {
         m_beam = GetComponent<Transform>();
