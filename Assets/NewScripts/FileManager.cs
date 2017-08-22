@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Text.RegularExpressions;
 using System.IO;
+using UnityEngine;
 
 public struct StrPair {
     public string field;
@@ -29,10 +30,17 @@ public class FileManager : MonoBehaviour {
     public SchemaManager TargetManager;
     public MappingManager MapManager;
 
+    public bool debugMode = false;
+    private string m_sourceAddress;
+    private string m_targetAddress;
+
     // Use this for initialization
     void Start () {
         RefreshFiles("Schemas");
         RefreshFiles("Mappings");
+        // for testing
+        ImportMapping("MatchResult1");
+        ImportSchema("mondial-schema-mysql", true);
     }
 
     List<string> RefreshFiles (string folder) {
@@ -54,34 +62,131 @@ public class FileManager : MonoBehaviour {
         {
             fileNames.Add(Path.GetFileNameWithoutExtension(file.ToString()));
         }
+        foreach (string fileName in fileNames) {
+            Debug.Log(fileName);
+        }
         // put list of fileNames onto control panel
         return fileNames;
     }
 
-    void ImportSchema(string fileName, bool SchemaType) {
-        // read file
-        // parse through file to get 
-        // database name
-        // tables: table name, and pairs of fields/field types
-        // ignore constraints
-        // recognise end of table
-        // recognise end of file
+    void ImportSchema(string fileName, bool isSourceType) {
+        string path = "Schemas/" + fileName + ".sql";
+        if (!File.Exists(path)) {
+            Debug.Log("file not found: " + path);
+            return;
+        }
+        
+        SchemaManager schemaManager = TargetManager;
+        if (isSourceType) {
+            schemaManager = SourceManager;
+        }
+        
+        schemaManager.ClearSchema();
+        schemaManager.m_schemaName = path;
+        StreamReader sr = new StreamReader(path);
+        
+        // read until find "CREATE DATABASE [name]"
+        while (sr.Peek() > -1) {
+            string line = sr.ReadLine();
+            if (line.StartsWith(@"CREATE DATABASE")) {
+                char[] seperators = { ' ', ';' };
+                string[] words = line.Split(seperators);
+                schemaManager.m_databaseName = words[2];
+                if (debugMode)
+                    Debug.Log("database name: " + words[2]);
+                break;
+            }
+        }
+        if (sr.EndOfStream) {
+            Debug.Log("Error: Database name not found in " + path);
+            return;
+        }
 
-        // depending on if SchemaType is SOURCE or TARGET,
-        // load schema in correct schema manager
+        // sort through rest of file, seeking tables
+        Regex fieldRX = new Regex(@"\A\(?\s*(\w+)\s*(\w+\(?\d*\)?).*");
+        while (sr.Peek() > -1) {
+            string line = sr.ReadLine();
+            // read until find "CREATE TABLE [name]"
+            if (!line.StartsWith(@"CREATE TABLE")) {
+                continue;
+            }
+            
+            // get table name
+            string tableName = Regex.Match(line, @"CREATE TABLE (\w*)").Groups[1].Value;
+            if (debugMode) {
+                Debug.Log("table name: " + tableName);
+            }
+            List<StrPair> fieldPairs = new List<StrPair>();
+            // get list of field names and types
+            while (sr.Peek() > -1) {
+                string fieldLine = sr.ReadLine();
+                // skip CONSTRAINT lines
+                if (fieldLine.Contains("CONSTRAINT")) {
+                    break;
+                }
+                Match match = fieldRX.Match(fieldLine);
+                if (debugMode) {
+                    for (int i = 1; i <= 2; i++) {
+                        Debug.Log(match.Groups[i].Value);
+                    }
+                }
+                fieldPairs.Add(new StrPair(match.Groups[1].Value, match.Groups[2].Value));
+                // end of table creation
+                if (fieldLine.EndsWith(";")) {
+                    break;
+                }
+            }
+            schemaManager.CreateTable(tableName, fieldPairs);
+        }
+        sr.Close();
     }
-    
-    void ImportMapping() {
-        // line 1: "MatchResult", unknown brackets
-        // line 2 and 3: file path of source and target
-        // line 4: filler, 56 "-"s
-        // use string.StartsWith(" - ") or " + " to determine end
-        //  - [table].[field] <-> [table].[field]: [confidence]
-        //  + Total: [number of] correspondences
-        // end filler, 56 "-"s
 
-        // send each mapping to mapping manager, call link(table, field, table2, field2)
-        // on fail, clear existing mapping, log error
+    /// <summary>
+    /// Import the mapping and load it into Map Manager
+    /// </summary>
+    /// <param name="fileName">Name of the mapping text file.</param>
+    void ImportMapping(string fileName) {
+        string path = "Mappings/" + fileName + ".txt";
+        if (!File.Exists(path)) {
+            Debug.Log("file not found: " + path);
+            return;
+        }
+
+        MapManager.ClearBeams();
+        StreamReader sr = new StreamReader(path);
+        sr.ReadLine(); // discard first line
+        m_sourceAddress = sr.ReadLine();
+        m_targetAddress = sr.ReadLine();
+        sr.ReadLine(); // discard divider
+
+        while (sr.Peek() > -1) {
+            string line = sr.ReadLine();
+            if (line.StartsWith(@" + ")) {
+                break;
+            }
+            // input format: - [table].[field] <-> [table].[field]: [confidence]
+            // 2nd field may not exist - interpreted as empty strings
+            Regex mapRX = new Regex(@"\s\-\s(\w*)\.?(\w*)\s.{3}\s(\w*)\.?(\w*)\:\s(\d*\.\d*)");
+            Match match = mapRX.Match(line);
+            for (int i = 1; i <= 5; i++) {
+                Debug.Log(match.Groups[i].Value);
+            }
+            // send each mapping to mapping manager, call AddBeam(table, field, table2, field2, confidence)
+            bool addSuccess = MapManager.AddBeam(
+                match.Groups[1].Value, 
+                match.Groups[2].Value, 
+                match.Groups[3].Value, 
+                match.Groups[4].Value,
+                float.Parse(match.Groups[5].Value, System.Globalization.CultureInfo.InvariantCulture)
+            );
+            // on fail, clear existing mapping, log error
+            if (!addSuccess) {
+                Debug.Log("Import failed, clearing existing mapping");
+                MapManager.ClearBeams();
+                break;
+            }
+        }
+        sr.Close();
     }
 
     /// <summary>

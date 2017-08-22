@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LaserPointer : MonoBehaviour
 {
-
+    /*
     private SteamVR_TrackedObject trackedObj;
     // 1
     public GameObject laserPrefab;
@@ -111,4 +111,5 @@ public class LaserPointer : MonoBehaviour
             Teleport();
         }
     }
+    */
 }

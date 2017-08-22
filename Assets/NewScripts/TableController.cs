@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class TableController : MonoBehaviour
 {
+    /*
     public Text headerPrefab;           // used to update the header row
     public GameObject rowPrefab;        // used to store cells
     public Text cellPrefab;             // used to insert more data
@@ -200,5 +201,5 @@ public class TableController : MonoBehaviour
     /// Clean up all data
     /// </summary>
     void OnDestroy() { }
-
+    */
 }

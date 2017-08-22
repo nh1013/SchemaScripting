@@ -5,14 +5,9 @@ public class MappingBeam : MonoBehaviour
 {
     public Transform m_SourceField;
     public Transform m_TargetField;
-    public Transform m_beam;
 
+    public bool debugMode = false;
     public float m_confidence = 1.0f;
-
-    // Use this for initialization
-    void Start() {
-        m_beam = GetComponent<Transform>();
-    }
 
     // Update is called once per frame
     void Update() {
@@ -25,9 +20,12 @@ public class MappingBeam : MonoBehaviour
             m_TargetField.position.y, 
             m_TargetField.position.z);
         // update beam position, orientation, and size (scale)
-        m_beam.position = Vector3.Lerp(sourceNode, targetNode, 0.5f);
-        m_beam.LookAt(targetNode);
-        m_beam.localScale = new Vector3(m_beam.localScale.x, m_beam.localScale.y,
-            Vector3.Distance(sourceNode, targetNode));
+        transform.position = Vector3.Lerp(sourceNode, targetNode, 0.5f);
+        transform.LookAt(targetNode);
+        transform.localScale = new Vector3(
+            transform.localScale.x, 
+            transform.localScale.y,
+            Vector3.Distance(sourceNode, targetNode)
+        );
     }
 }

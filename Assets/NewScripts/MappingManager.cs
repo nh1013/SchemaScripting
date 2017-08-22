@@ -8,6 +8,8 @@ public class MappingManager : MonoBehaviour
 
     public Transform SourceManager;
     public Transform TargetManager;
+
+    public bool debugMode = false;
     public List<Transform> m_BeamList;
 
     // Use this for initialization
@@ -24,7 +26,7 @@ public class MappingManager : MonoBehaviour
     /// <param name="tFieldName">Target table's field name.</param>
     /// <param name="confidence">Confidence value of connection.</param>
     /// <returns>True if load was successful, false if load failed and aborted.</returns>
-    public bool AddBeam(string sTableName, string sFieldName, string tTableName, string tFieldName, float confidence) {
+    public bool AddBeam(string sTableName, string sFieldName, string tTableName, string tFieldName, float confidence = 1.0f) {
         // check if the fields exist
         Transform sField, tField;
         Transform sTable = SourceManager.Find(sTableName);
@@ -32,15 +34,22 @@ public class MappingManager : MonoBehaviour
             Debug.Log("source table not found: " + sTableName);
             return false;
         }
+        if (sFieldName.Length == 0) {
+            sFieldName = "name";
+        }
         sField = sTable.Find(sFieldName);
         if (sField == null) {
             Debug.Log("source field not found: " + sFieldName);
             return false;
         }
-        Transform tTable = SourceManager.Find(tTableName);
+
+        Transform tTable = TargetManager.Find(tTableName);
         if (tTable == null) {
             Debug.Log("target table not found: " + tTableName);
             return false;
+        }
+        if (tFieldName.Length == 0) {
+            tFieldName = "name";
         }
         tField = tTable.Find(tFieldName);
         if (tField == null) {
@@ -135,10 +144,5 @@ public class MappingManager : MonoBehaviour
             Destroy(transform.GetChild(i).gameObject);
         }
         m_BeamList.Clear();
-    }
-
-    // Update is called once per frame
-    void Update() {
-
     }
 }
