@@ -78,16 +78,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\NewScripts\FieldCell.cs" />
-    <Compile Include="Assets\NewScripts\FileManager.cs" />
-    <Compile Include="Assets\NewScripts\LaserPointer.cs" />
-    <Compile Include="Assets\NewScripts\MappingBeam.cs" />
-    <Compile Include="Assets\NewScripts\MappingManager.cs" />
-    <Compile Include="Assets\NewScripts\SchemaManager.cs" />
-    <Compile Include="Assets\NewScripts\TableController.cs" />
-    <Compile Include="Assets\NewScripts\TableManager.cs" />
+    <Compile Include="Assets\Scripts\FieldCell.cs" />
+    <Compile Include="Assets\Scripts\FileManager.cs" />
+    <Compile Include="Assets\Scripts\LaserPointer.cs" />
+    <Compile Include="Assets\Scripts\MappingBeam.cs" />
+    <Compile Include="Assets\Scripts\MappingManager.cs" />
+    <Compile Include="Assets\Scripts\SchemaManager.cs" />
+    <Compile Include="Assets\Scripts\TableController.cs" />
+    <Compile Include="Assets\Scripts\TableManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Fonts\LICENSE.txt" />
     <None Include="Assets\Shaders\3DText.shader" />
     <None Include="Assets\Shaders\3DTextOneSided.shader" />
   </ItemGroup>
