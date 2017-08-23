@@ -51,7 +51,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b3ab11b560c13448b20d23a35f87a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TablePrefab: {fileID: 4508210858654800, guid: c705b6a1e9d28144b96bed0e12c84a9a,
+  TablePrefab: {fileID: 4977479735134356, guid: c705b6a1e9d28144b96bed0e12c84a9a,
+    type: 2}
+  SourceFieldCellPrefab: {fileID: 4585892729793096, guid: 88312d010f754cb43a9ef8f76cda9a5a,
     type: 2}
   m_tableList: []
   debugMode: 0

@@ -5,6 +5,7 @@ public class MappingBeam : MonoBehaviour
 {
     public Transform m_SourceField;
     public Transform m_TargetField;
+    public Transform m_beamMesh;
 
     private Transform m_SourceBox;
     private Transform m_TargetBox;
@@ -24,6 +25,18 @@ public class MappingBeam : MonoBehaviour
 
         m_SourceBox = sourceField.GetComponent<FieldCell>().m_boxMesh;
         m_TargetBox = targetField.GetComponent<FieldCell>().m_boxMesh;
+
+        // set color of beam depending on confidence
+        // beams with > 99% confidence are marked in black
+        if (Mathf.Abs(m_confidence - 1f) < 0.01) {
+            m_beamMesh.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
+        }
+        else if (m_confidence >= 0.7) {
+            m_beamMesh.GetComponent<Renderer>().material.color = new Color(3.333f * m_confidence - 2.333f, 1, 0);
+        }
+        else {
+            m_beamMesh.GetComponent<Renderer>().material.color = new Color(1, 1.428f * m_confidence, 0);
+        }
     }
 
     // Update is called once per frame

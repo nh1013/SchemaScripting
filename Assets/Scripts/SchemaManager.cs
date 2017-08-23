@@ -8,6 +8,8 @@ public class SchemaManager : MonoBehaviour
     //public enum SCHEMA_TYPE { SOURCE, TARGET};
 
     public Transform TablePrefab;
+    public Transform SourceFieldCellPrefab;
+    //public Transform TargetFieldCellPrefab;
 
     public List<Transform> m_tableList;
     
@@ -57,6 +59,9 @@ public class SchemaManager : MonoBehaviour
     /// <param name="fields">Pairs of strings, indicating each field's name and type.</param>
     public void CreateTable(string name, List<StrPair> fields) {
         Transform table = Instantiate(TablePrefab, transform);
+        if (m_isSource) {
+            table.GetComponent<TableManager>().FieldCellPrefab = SourceFieldCellPrefab;
+        }
         table.localPosition = new Vector3(0.0f, m_bottomSpace, 0.0f);
         table.GetComponent<TableManager>().SetName(name);
         table.GetComponent<TableManager>().SetFields(fields);

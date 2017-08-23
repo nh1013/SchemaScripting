@@ -128,7 +128,7 @@ public class FileManager : MonoBehaviour {
             while (sr.Peek() > -1) {
                 string fieldLine = sr.ReadLine();
                 // skip CONSTRAINT lines
-                if (fieldLine.Contains("CONSTRAINT")) {
+                if (fieldLine.Contains("CONSTRAINT") || fieldLine.Contains("PRIMARY")) {
                     break;
                 }
                 Match match = fieldRX.Match(fieldLine);
@@ -181,8 +181,10 @@ public class FileManager : MonoBehaviour {
             // 2nd field may not exist - interpreted as empty strings
             Regex mapRX = new Regex(@"\s\-\s(\w*)\.?(\w*)\s.{3}\s(\w*)\.?(\w*)\:\s(\d*\.\d*)");
             Match match = mapRX.Match(line);
-            for (int i = 1; i <= 5; i++) {
-                Debug.Log(match.Groups[i].Value);
+            if (debugMode) {
+                for (int i = 1; i <= 5; i++) {
+                    Debug.Log(match.Groups[i].Value);
+                }
             }
             // send each mapping to mapping manager, call AddBeam(table, field, table2, field2, confidence)
             bool addSuccess = MapManager.AddBeam(

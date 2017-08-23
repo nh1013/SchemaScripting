@@ -44,8 +44,10 @@ public class TableManager : MonoBehaviour
     /// </summary>
     /// <param name="name">Name of the table.</param>
     public void SetName(string name) {
+        m_titleCell = Instantiate(FieldCellPrefab, transform);
         transform.name = name;
         m_titleCell.GetComponent<FieldCell>().m_fieldName.text = name;
+        m_titleCell.GetComponent<FieldCell>().m_fieldType.text = "";
         m_titleCell.GetComponent<FieldCell>().m_fullName = name;
     }
 
