@@ -41,7 +41,7 @@ public class SchemaManager : MonoBehaviour
     */
 
     /// <summary>
-    /// Clean up Schema
+    /// Clean up Schema, removing all children (tables)
     /// </summary>
     public void ClearSchema() {
         for (int i = transform.childCount - 1; i >= 0; i--) {
@@ -68,9 +68,4 @@ public class SchemaManager : MonoBehaviour
         m_tableList.Add(table);
         m_bottomSpace -= table.GetComponent<TableManager>().GetHeight() + m_spacing;
     }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }

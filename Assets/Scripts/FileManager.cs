@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Globalization;
 using UnityEngine;
+using UnityEngine.UI;
 
 public struct StrPair {
     public string field;
@@ -29,6 +30,7 @@ public struct Table {
 
 public class FileManager : MonoBehaviour {
 
+    public ControlPanel controlPanel;
     public SchemaManager SourceManager;
     public SchemaManager TargetManager;
     public MappingManager MapManager;
@@ -47,19 +49,26 @@ public class FileManager : MonoBehaviour {
         ImportMapping("MatchResult1");
     }
 
-    List<string> RefreshFiles (string folder) {
+    /// <summary>
+    /// Get a new batch of files in the folders, 
+    /// and put them in the control panel's dropdown selection
+    /// </summary>
+    /// <param name="folder">The folder of files to refresh.</param>
+    public void RefreshFiles (string folder) {
         DirectoryInfo dir = new DirectoryInfo(folder + "/");
         List<string> fileNames = new List<string> { };
         FileInfo[] info;
         if (folder == "Schemas") {
             info = dir.GetFiles("*.sql");
+            fileNames.Add("Select schema");
         }
         else if (folder == "Mappings") {
             info = dir.GetFiles("*.txt");
+            fileNames.Add("Select mapping");
         }
         else {
-            Debug.Log("RefreshFiles: folder not recognised: " + folder);
-            return null;
+            Debug.Log("Error: folder not recognised: " + folder);
+            return;
         }
 
         foreach (FileInfo file in info)
@@ -72,10 +81,25 @@ public class FileManager : MonoBehaviour {
             }
         }
         // put list of fileNames onto control panel
-        return fileNames;
+        if (folder == "Schemas") {
+            controlPanel.m_sourceSchemaDropdown.ClearOptions();
+            controlPanel.m_targetSchemaDropdown.ClearOptions();
+            controlPanel.m_sourceSchemaDropdown.AddOptions(fileNames);
+            controlPanel.m_targetSchemaDropdown.AddOptions(fileNames);
+        }
+        else if (folder == "Mappings") {
+            controlPanel.m_mappingDropdown.ClearOptions();
+            controlPanel.m_mappingDropdown.AddOptions(fileNames);
+        }
+        return;
     }
 
-    void ImportSchema(string fileName, bool isSourceType) {
+    /// <summary>
+    /// Import a selected schema sql file and load it into Source/Target SchemaManager
+    /// </summary>
+    /// <param name="fileName">File name of schema in Schemas folder.</param>
+    /// <param name="isSourceType">Is the schema for the source? Else for target.</param>
+    public void ImportSchema(string fileName, bool isSourceType) {
         string path = "Schemas/" + fileName + ".sql";
         if (!File.Exists(path)) {
             Debug.Log("file not found: " + path);
@@ -155,7 +179,7 @@ public class FileManager : MonoBehaviour {
     /// Import the mapping and load it into Map Manager
     /// </summary>
     /// <param name="fileName">Name of the mapping text file.</param>
-    void ImportMapping(string fileName) {
+    public void ImportMapping(string fileName) {
         string path = "Mappings/" + fileName + ".txt";
         if (!File.Exists(path)) {
             Debug.Log("file not found: " + path);
@@ -207,7 +231,7 @@ public class FileManager : MonoBehaviour {
     /// <summary>
     /// Export the mapping into an unused file in folder Mappings/
     /// </summary>
-    void ExportMapping() {
+    public void ExportMapping() {
         // find unused filename
         int count = 0;
         string path = "Mappings/mathResult" + count + ".txt";
@@ -225,18 +249,14 @@ public class FileManager : MonoBehaviour {
         // for each connection in MappingManager,
         // output beam.source.getName() + " <-> " + beam.target.getName() + ": " + beam.confidence;
         foreach (Transform beam in MapManager.m_BeamList) {
-            string beamSourceName = beam.GetComponent<MappingBeam>().m_SourceField.GetComponent<FieldCell>().GetFullName();
-            string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().GetFullName();
+            string beamSourceName = beam.GetComponent<MappingBeam>().m_SourceField.GetComponent<FieldCell>().m_fullName;
+            string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().m_fullName;
             float beamConfidence = beam.GetComponent<MappingBeam>().m_confidence;
             sw.WriteLine(" - " + beamSourceName + " <-> " + beamTargetName + ": " + beamConfidence);
         }
         sw.WriteLine(" + Total: " + MapManager.m_BeamList.Count + " correspondences");
         sw.WriteLine("--------------------------------------------------------");
         sw.Close();
+        RefreshFiles("Mappings");
     }
-
-    // Update is called once per frame
-    void Update () {
-		
-	}
 }

@@ -72,14 +72,14 @@ public class MappingManager : MonoBehaviour
     /// <param name="targetField">Transform of object from target side schema.</param>
     public bool AddBeam(Transform sourceField, Transform targetField, float confidence = 1.0f) {
         // should check if beam already exists
-        string sourceName = sourceField.GetComponent<FieldCell>().GetFullName();
-        string targetName = targetField.GetComponent<FieldCell>().GetFullName();
+        string sourceName = sourceField.GetComponent<FieldCell>().m_fullName;
+        string targetName = targetField.GetComponent<FieldCell>().m_fullName;
         foreach (Transform beam in m_BeamList) {
-            string beamSourceName = beam.GetComponent<MappingBeam>().m_SourceField.GetComponent<FieldCell>().GetFullName();
+            string beamSourceName = beam.GetComponent<MappingBeam>().m_SourceField.GetComponent<FieldCell>().m_fullName;
             if (sourceName != beamSourceName) {
                 continue;
             }
-            string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().GetFullName();
+            string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().m_fullName;
             if (targetName == beamTargetName) {
                 return false;
             }
@@ -101,14 +101,14 @@ public class MappingManager : MonoBehaviour
     /// <param name="sourceField">Start node of beam to be removed.</param>
     /// <param name="targetField">End node of beam to be removed.</param>
     public bool RemoveBeam(Transform sourceField, Transform targetField) {
-        string sourceName = sourceField.GetComponent<FieldCell>().GetFullName();
-        string targetName = targetField.GetComponent<FieldCell>().GetFullName();
+        string sourceName = sourceField.GetComponent<FieldCell>().m_fullName;
+        string targetName = targetField.GetComponent<FieldCell>().m_fullName;
         foreach (Transform beam in m_BeamList) {
-            string beamSourceName = beam.GetComponent<MappingBeam>().m_SourceField.GetComponent<FieldCell>().GetFullName();
+            string beamSourceName = beam.GetComponent<MappingBeam>().m_SourceField.GetComponent<FieldCell>().m_fullName;
             if (sourceName != beamSourceName) {
                 continue;
             }
-            string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().GetFullName();
+            string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().m_fullName;
             if (targetName != beamTargetName) {
                 continue;
             }

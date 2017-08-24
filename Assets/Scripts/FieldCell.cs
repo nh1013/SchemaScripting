@@ -24,10 +24,12 @@ public class FieldCell : MonoBehaviour
         return m_scale * m_boxMesh.localScale.y;
     }
 
+    /*
     /// <summary>
-    /// Get the full name of this cell
+    /// [Deprecated] Get the full name of this cell
     /// </summary>
     public string GetFullName() {
         return m_fullName;
     }
+    */
 }
