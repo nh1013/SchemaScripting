@@ -23,6 +23,8 @@ public class ControlPanel : MonoBehaviour
     public Text m_sourceFieldText;
     public Text m_targetFieldText;
     public Text m_beamConfidenceText;
+    public Button m_linkButton;
+    public Button m_deleteButton;
 
     // selected items
     private Transform m_selectedSourceField;
@@ -33,6 +35,7 @@ public class ControlPanel : MonoBehaviour
     void Start() {
     }
 
+    // navigation function
     /// <summary>
     /// Show the selected menu, by deactivating all others
     /// </summary>
@@ -49,34 +52,7 @@ public class ControlPanel : MonoBehaviour
         return;
     }
 
-    /// <summary>
-    /// Sort the selected item into its slot, 
-    /// and add/remove others as suitable
-    /// </summary>
-    /// <param name="item">The object being selected.</param>
-    public void Select(Transform item) {
-        // if tagged with Sourcefield then
-            // if m_selectedSourceField already assigned
-                // unselect it and beam
-            // assign to m_selectedSourceField
-            // if targetfield assigned, then
-                // try to select beam between them
-        // similarly with targetField item
-        // if tagged with beam, then
-            // seek out its source and target field cells, and
-            // assign them to correct variables
-        // updateEditMenu()
-    }
-    
-    /// <summary>
-    /// Update the entries in edit menu
-    /// </summary>
-    public void UpdateEditMenu() {
-        m_sourceFieldText.text = (m_selectedSourceField) ? m_selectedSourceField.GetComponent<FieldCell>().m_fullName : "not selected";
-        m_targetFieldText.text = (m_selectedTargetField) ? m_selectedTargetField.GetComponent<FieldCell>().m_fullName : "not selected";
-        m_beamConfidenceText.text = (m_selectedMappingBeam) ? m_selectedMappingBeam.GetComponent<MappingBeam>().m_confidence.ToString() : "none";
-}
-
+    // file menu functions
     /// <summary>
     /// Import to the source schema manager the schema selected by the control panel
     /// </summary>
@@ -113,22 +89,80 @@ public class ControlPanel : MonoBehaviour
         fileManager.ImportMapping(selection);
     }
 
-    /*
     /// <summary>
-    /// Select the table passed in
+    /// Export the current mapping
     /// </summary>
-    public void SelectTable(RectTransform table)
-    {
-        selectedTable = table;
-        int index = 0;
-        foreach (var option in selectTableDropdown.options)
-        {
-            if (option.text == table.name)
-            {
-                break;
-            }
-            index++;
+    public void ExportMapping() {
+        fileManager.ExportMapping();
+    }
+
+    // edit menu functions
+    /// <summary>
+    /// Sort the selected item into its slot, 
+    /// and add/remove others as suitable
+    /// </summary>
+    /// <param name="item">The object being selected.</param>
+    public void Select(Transform item) {
+        // [shader] unshade m_selectedSourceField, m_selectedTargetField, and m_selectedMappingBeam
+        if (item.gameObject.tag == "SourceFieldCell") {
+            m_selectedSourceField = item;
+            m_selectedMappingBeam = mapManager.FindBeam(m_selectedSourceField, m_selectedTargetField);
         }
-        selectTableDropdown.value = index;
-    }*/
+        else if (item.gameObject.tag == "TargetFieldCell") {
+            m_selectedTargetField = item;
+            m_selectedMappingBeam = mapManager.FindBeam(m_selectedSourceField, m_selectedTargetField);
+        }
+        else if (item.gameObject.tag == "MappingBeam") {
+            m_selectedMappingBeam = item;
+            m_selectedSourceField = m_selectedMappingBeam.GetComponent<MappingBeam>().m_SourceField;
+            m_selectedTargetField = m_selectedMappingBeam.GetComponent<MappingBeam>().m_TargetField;
+        }
+        // [shader] shade m_selectedSourceField, m_selectedTargetField, and m_selectedMappingBeam
+        UpdateEditMenu();
+    }
+
+    /// <summary>
+    /// Update the entries in edit menu
+    /// </summary>
+    public void UpdateEditMenu() {
+        m_sourceFieldText.text = (m_selectedSourceField) ? m_selectedSourceField.GetComponent<FieldCell>().m_fullName : "not selected";
+        m_targetFieldText.text = (m_selectedTargetField) ? m_selectedTargetField.GetComponent<FieldCell>().m_fullName : "not selected";
+        m_beamConfidenceText.text = (m_selectedMappingBeam) ? m_selectedMappingBeam.GetComponent<MappingBeam>().m_confidence.ToString() : "none";
+
+        m_linkButton.gameObject.SetActive(false);
+        m_deleteButton.gameObject.SetActive(false);
+        if (m_selectedSourceField && m_selectedTargetField) {
+            if (m_selectedMappingBeam) {
+                m_deleteButton.gameObject.SetActive(true);
+            }
+            else {
+                m_linkButton.gameObject.SetActive(true);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Link two selected fields together
+    /// </summary>
+    public void LinkFields() {
+        if (!m_selectedSourceField || !m_selectedTargetField) {
+            Debug.Log("Error: requires two fields selected");
+            return;
+        }
+        Select(mapManager.AddBeam(m_selectedSourceField, m_selectedTargetField));
+    }
+
+    /// <summary>
+    /// Delete the selected mapping beam
+    /// </summary>
+    public void DeleteLink() {
+        if (!m_selectedMappingBeam) {
+            Debug.Log("Error: no object selected");
+            return;
+        }
+        // [shader] if applicable, remove shader of m_selectedMappingBeam
+        mapManager.RemoveBeam(m_selectedMappingBeam);
+        m_selectedMappingBeam = null;
+        UpdateEditMenu();
+    }
 }

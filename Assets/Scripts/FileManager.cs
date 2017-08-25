@@ -110,7 +110,8 @@ public class FileManager : MonoBehaviour {
         if (isSourceType) {
             schemaManager = SourceManager;
         }
-        
+
+        MapManager.ClearBeams();
         schemaManager.ClearSchema();
         schemaManager.m_schemaName = path;
         StreamReader sr = new StreamReader(path);
@@ -237,12 +238,12 @@ public class FileManager : MonoBehaviour {
         string path = "Mappings/mathResult" + count + ".txt";
         while (File.Exists(path)) {
             count++;
-            path = "Mappings/mathResult" + count + ".txt";
+            path = "Mappings/matchResult" + count + ".txt";
         }
         StreamWriter sw = new StreamWriter(path);
 
         // export in format as COMA requires
-        sw.WriteLine("MatchResult [16,18]");
+        sw.WriteLine("MatchResult [" + SourceManager.m_tableList.Count + "," + TargetManager.m_tableList.Count + "]");
         sw.WriteLine(SourceManager.m_schemaName);
         sw.WriteLine(TargetManager.m_schemaName);
         sw.WriteLine("--------------------------------------------------------");

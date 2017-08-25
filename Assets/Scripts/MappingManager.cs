@@ -70,7 +70,7 @@ public class MappingManager : MonoBehaviour
     /// </summary>
     /// <param name="sourceField">Transform of object from source side schema.</param>
     /// <param name="targetField">Transform of object from target side schema.</param>
-    public bool AddBeam(Transform sourceField, Transform targetField, float confidence = 1.0f) {
+    public Transform AddBeam(Transform sourceField, Transform targetField, float confidence = 1.0f) {
         // should check if beam already exists
         string sourceName = sourceField.GetComponent<FieldCell>().m_fullName;
         string targetName = targetField.GetComponent<FieldCell>().m_fullName;
@@ -81,7 +81,8 @@ public class MappingManager : MonoBehaviour
             }
             string beamTargetName = beam.GetComponent<MappingBeam>().m_TargetField.GetComponent<FieldCell>().m_fullName;
             if (targetName == beamTargetName) {
-                return false;
+                Debug.Log("Warning: attempted to create beam that already exists, between " + beamSourceName + " and " + beamTargetName);
+                return beam;
             }
         }
 
@@ -89,18 +90,15 @@ public class MappingManager : MonoBehaviour
         Transform newBeam = Instantiate(BeamPrefab, transform);
         m_BeamList.Add(newBeam);
         newBeam.GetComponent<MappingBeam>().SetValues(sourceField, targetField, confidence);
-        return true;
+        return newBeam;
     }
 
     /// <summary>
-    /// In-game removal of a beam, via selecting the beam's end nodes
+    /// Find a beam, via the beam's end nodes
     /// </summary>
-    /// <remarks>
-    /// With proper set up, this will never be called
-    /// </remarks>
-    /// <param name="sourceField">Start node of beam to be removed.</param>
-    /// <param name="targetField">End node of beam to be removed.</param>
-    public bool RemoveBeam(Transform sourceField, Transform targetField) {
+    /// <param name="sourceField">Start node of beam to be found.</param>
+    /// <param name="targetField">End node of beam to be found.</param>
+    public Transform FindBeam(Transform sourceField, Transform targetField) {
         string sourceName = sourceField.GetComponent<FieldCell>().m_fullName;
         string targetName = targetField.GetComponent<FieldCell>().m_fullName;
         foreach (Transform beam in m_BeamList) {
@@ -113,12 +111,34 @@ public class MappingManager : MonoBehaviour
                 continue;
             }
             // beam matches target for removal
-            m_BeamList.Remove(beam);
+            if (debugMode) {
+                Debug.Log("Beam found between " + sourceName + " and " + targetName);
+            }
+            return beam;
+        }
+        // no matches
+        if (debugMode) {
+            Debug.Log("No beam found between " + sourceName + " and " + targetName);
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// In-game removal of a beam, via selecting the beam's end nodes
+    /// </summary>
+    /// <remarks>
+    /// With proper set up, this will never be called
+    /// </remarks>
+    /// <param name="sourceField">Start node of beam to be removed.</param>
+    /// <param name="targetField">End node of beam to be removed.</param>
+    public bool RemoveBeam(Transform sourceField, Transform targetField) {
+        Transform beam = FindBeam(sourceField, targetField);
+        if (beam != null) {
             Destroy(beam);
             return true;
         }
         // no matches
-        Debug.Log("Error: could not locate beam between " + sourceName + " and " + targetName);
+        Debug.Log("Error: could not locate beam, deletion failed");
         return false;
     }
 

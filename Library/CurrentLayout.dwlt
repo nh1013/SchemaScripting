@@ -106,10 +106,10 @@ MonoBehaviour:
     y: 30
     width: 1536
     height: 731
-  m_MinSize: {x: 611, y: 492}
-  m_MaxSize: {x: 18006, y: 14042}
+  m_MinSize: {x: 713, y: 492}
+  m_MaxSize: {x: 18008, y: 14042}
   vertical: 0
-  controlID: 81
+  controlID: 80
 --- !u!114 &6
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -130,10 +130,10 @@ MonoBehaviour:
     y: 0
     width: 1183
     height: 731
-  m_MinSize: {x: 336, y: 492}
+  m_MinSize: {x: 436, y: 492}
   m_MaxSize: {x: 14006, y: 14042}
   vertical: 0
-  controlID: 82
+  controlID: 81
 --- !u!114 &7
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -157,7 +157,7 @@ MonoBehaviour:
   m_MinSize: {x: 232, y: 492}
   m_MaxSize: {x: 10002, y: 14042}
   vertical: 1
-  controlID: 23
+  controlID: 46
 --- !u!114 &8
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -226,16 +226,16 @@ MonoBehaviour:
     y: 0
     width: 873
     height: 731
-  m_MinSize: {x: 104, y: 121}
+  m_MinSize: {x: 204, y: 221}
   m_MaxSize: {x: 4004, y: 4021}
-  m_ActualView: {fileID: 16}
+  m_ActualView: {fileID: 15}
   m_Panes:
   - {fileID: 15}
   - {fileID: 12}
   - {fileID: 16}
   - {fileID: 17}
-  m_Selected: 2
-  m_LastSelected: 1
+  m_Selected: 0
+  m_LastSelected: 2
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -254,8 +254,8 @@ MonoBehaviour:
     y: 0
     width: 353
     height: 731
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 277, y: 71}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
@@ -366,9 +366,9 @@ MonoBehaviour:
     height: 289
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: fe250000
-    m_LastClickedID: 9726
-    m_ExpandedIDs: e0fbffff00000000
+    m_SelectedIDs: 
+    m_LastClickedID: 0
+    m_ExpandedIDs: 9844feff2477feff2a77feff8031ffff2242ffff9047ffff2261fffff67cffff0a7dffff0e7dffff127dffff167dffff227dffff047fffff107fffff147fffff187fffff1c7fffff307fffff4c9bffff529bffff589bffff5e9bffff709bffff9ea0fffff8c1ffff64e8ffff6eedffffe0fbffffe2fbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -439,7 +439,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 9}
     m_SelectedIDs: 60280000
     m_LastClickedID: 10336
-    m_ExpandedIDs: 00000000d22400002225000042250000d4250000d8250000b0260000
+    m_ExpandedIDs: 00000000d62400002625000046250000d8250000dc250000b2260000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -467,7 +467,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000d22400002225000042250000d4250000d8250000b0260000
+    m_ExpandedIDs: 00000000d624000026250000462500006c2500008c250000dc250000b2260000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -549,14 +549,14 @@ MonoBehaviour:
     width: 869
     height: 710
   m_SceneLighting: 1
-  lastFramingTime: 208.569044628428
+  lastFramingTime: 23598.4748886638
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 0.15340647, y: 2.1719978, z: 0.20031834}
+    m_Target: {x: 0, y: 0, z: 0}
     speed: 2
-    m_Value: {x: 0.15340647, y: 2.1719978, z: 0.20031834}
+    m_Value: {x: 0, y: 0, z: 0}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -579,13 +579,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: 0.04796003, y: 0.029960724, z: -0.0014392815, w: 0.9983997}
+    m_Target: {x: 0.20839992, y: 0.02347089, z: -0.0050025564, w: 0.97774845}
     speed: 2
-    m_Value: {x: -0.04796003, y: -0.029960724, z: 0.0014392815, w: -0.9983997}
+    m_Value: {x: 0.20840009, y: 0.023470908, z: -0.00500256, w: 0.9777492}
   m_Size:
-    m_Target: 7.4710555
+    m_Target: 3.8414676
     speed: 2
-    m_Value: 7.4710555
+    m_Value: 3.8414676
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -677,7 +677,7 @@ MonoBehaviour:
   m_ScrollPosition: {x: 0, y: 0}
   m_InspectorMode: 0
   m_PreviewResizer:
-    m_CachedPref: 262
+    m_CachedPref: 138
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_PreviewWindow: {fileID: 0}
